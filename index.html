@@ -135,8 +135,45 @@ textarea{min-height:110px;resize:vertical;}
 }
 .nav-buttons{display:flex;justify-content:space-between;gap:10px;margin-top:18px;}
 
-/* THANK YOU */
-.thankyou-icon{font-size:46px;text-align:center;margin-bottom:8px;}
+/* THANK YOU — tela de agradecimento profissional */
+.ty-check-wrap{display:flex;justify-content:center;margin:10px 0 18px;}
+.ty-check-svg{width:88px;height:88px;}
+.ty-check-circle{
+  stroke:var(--green);
+  stroke-dasharray:226;
+  stroke-dashoffset:226;
+  animation:ty-draw-circle .5s ease-out forwards;
+}
+.ty-check-mark{
+  stroke:var(--green);
+  stroke-dasharray:48;
+  stroke-dashoffset:48;
+  animation:ty-draw-check .35s ease-out .45s forwards;
+}
+@keyframes ty-draw-circle{ to{ stroke-dashoffset:0; } }
+@keyframes ty-draw-check{ to{ stroke-dashoffset:0; } }
+@media (prefers-reduced-motion: reduce){
+  .ty-check-circle,.ty-check-mark{ animation:none; stroke-dashoffset:0; }
+}
+.ty-title{font-size:26px;font-weight:900;color:var(--vw-blue-dark);text-align:center;margin-bottom:6px;}
+.ty-subtitle{font-size:16px;font-weight:700;color:var(--vw-blue);text-align:center;margin-bottom:18px;}
+.ty-confirm{font-size:15px;line-height:1.6;color:var(--text);text-align:center;max-width:640px;margin:0 auto 18px;}
+.ty-goals-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin:0 auto 20px;max-width:640px;
+}
+@media(min-width:640px){ .ty-goals-grid{grid-template-columns:repeat(4,1fr);} }
+.ty-goal{background:#f7f9fd;border:1px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center;}
+.ty-goal-icon{font-size:26px;margin-bottom:6px;}
+.ty-goal-label{font-size:12px;font-weight:700;color:var(--vw-blue-dark);line-height:1.35;}
+.ty-quote{
+  background:#eaf0ff;border-left:4px solid var(--vw-blue);border-radius:8px;
+  padding:16px 18px;font-size:17px;font-weight:800;color:var(--vw-blue-dark);
+  text-align:center;max-width:640px;margin:0 auto 20px;line-height:1.4;
+}
+.ty-impact{font-size:22px;font-weight:900;color:var(--vw-blue-dark);text-align:center;margin:8px 0 6px;line-height:1.3;}
+.ty-impact-sub{font-size:14px;color:var(--text-soft);text-align:center;max-width:560px;margin:0 auto 22px;line-height:1.5;}
+.ty-final-btn{font-size:16px;padding:16px;max-width:520px;margin:0 auto;display:flex;}
 
 /* DASHBOARD */
 .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
@@ -276,12 +313,33 @@ mark{background:#fff3b0;padding:0 2px;border-radius:2px;}
     </div>
 
     <div class="card hidden" id="thankyouCard">
-      <div class="thankyou-icon">🎯</div>
-      <h2 style="text-align:center">Obrigado por participar!</h2>
-      <div class="subtitle" style="text-align:center">Sua contribuição foi registrada.</div>
-      <p style="text-align:center;font-style:italic;color:var(--text-soft);margin:10px 0 16px;">"Cada resposta ajuda a construir um time de Monitores mais preparado."</p>
-      <div id="thankyouSummary"></div>
-      <button class="btn btn-outline btn-block" id="btnBackHome" style="margin-top:14px;">Voltar ao início</button>
+      <div class="ty-check-wrap">
+        <svg class="ty-check-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <circle class="ty-check-circle" cx="40" cy="40" r="36" fill="none" stroke-width="5"/>
+          <path class="ty-check-mark" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M24 41 L35 52 L57 28"/>
+        </svg>
+      </div>
+
+      <h1 class="ty-title">🎯 Obrigado por participar!</h1>
+      <div class="ty-subtitle">Sua opinião ajuda a construir o nosso próximo passo.</div>
+
+      <p class="ty-confirm">Suas respostas foram registradas com sucesso e serão usadas pra compreender melhor as necessidades de desenvolvimento dos Monitores.</p>
+
+      <div class="ty-goals-grid">
+        <div class="ty-goal"><div class="ty-goal-icon">💡</div><div class="ty-goal-label">O que precisamos desenvolver</div></div>
+        <div class="ty-goal"><div class="ty-goal-icon">🧠</div><div class="ty-goal-label">Quais competências devemos fortalecer</div></div>
+        <div class="ty-goal"><div class="ty-goal-icon">🛠️</div><div class="ty-goal-label">Quais treinamentos fazem mais sentido</div></div>
+        <div class="ty-goal"><div class="ty-goal-icon">🤝</div><div class="ty-goal-label">Como podemos melhorar nossa rotina como Monitores</div></div>
+      </div>
+
+      <div class="ty-quote">Aqui, não buscamos respostas certas ou erradas.<br>Buscamos ouvir você.</div>
+
+      <p class="ty-confirm">As informações de todos os Monitores serão analisadas em conjunto, pra transformar as necessidades identificadas em ações reais de desenvolvimento.</p>
+
+      <div class="ty-impact">🚀 Ouvir. Desenvolver. Aproximar. Evoluir.</div>
+      <div class="ty-impact-sub">Você fez a sua parte. Agora nós fazemos a nossa: transformar sua voz em desenvolvimento.</div>
+
+      <button class="btn btn-primary btn-block ty-final-btn" id="btnBackHome">🚀 FINALIZAR E VOLTAR AO INÍCIO</button>
     </div>
   </section>
 
@@ -603,6 +661,18 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove("show"), 2200);
 }
 
+function restartThankyouAnimation(){
+  // a animação CSS (stroke-dashoffset) roda uma vez e fica no estado final;
+  // isso força o navegador a "recomeçar" o desenho do círculo/check a cada novo envio.
+  [".ty-check-circle", ".ty-check-mark"].forEach(sel=>{
+    const el = document.querySelector(sel);
+    if(!el) return;
+    el.style.animation = "none";
+    void el.offsetWidth; // força reflow
+    el.style.animation = "";
+  });
+}
+
 function fmtDate(iso){
   const d = new Date(iso);
   return d.toLocaleDateString("pt-BR")+" "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
@@ -894,17 +964,9 @@ function finishSurvey(){
 
   document.getElementById("surveyCard").classList.add("hidden");
   document.getElementById("thankyouCard").classList.remove("hidden");
+  // reinicia a animação do checkmark a cada novo envio (retira e reaplica as classes)
+  restartThankyouAnimation();
 
-  const qs = currentQuestions();
-  const q2 = qs.find(x=>x.id==="q2");
-  const chosen = (surveyAnswers["q2"]||[]).filter(v=>v!=="__other__");
-  let summary = "";
-  if(chosen.length){
-    summary += '<div class="section-title">Temas que você indicou</div><div class="option-grid">';
-    chosen.forEach(c=> summary += '<div class="opt-btn selected" style="cursor:default;">'+escapeHtml(c)+'</div>');
-    summary += '</div>';
-  }
-  document.getElementById("thankyouSummary").innerHTML = summary;
   showToast("Resposta registrada!");
 }
 
