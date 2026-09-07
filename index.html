@@ -182,6 +182,17 @@ select.status-select{padding:6px;font-size:12px;width:auto;}
   z-index:100;padding:16px;
 }
 .modal-box{background:#fff;border-radius:14px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:18px;}
+.modal-box.modal-wide{max-width:640px;}
+.qa-block{border-bottom:1px solid var(--border);padding:12px 0;}
+.qa-block:last-child{border-bottom:none;}
+.qa-label{font-size:11px;font-weight:800;color:var(--vw-blue);text-transform:uppercase;letter-spacing:.4px;}
+.qa-question{font-size:14px;font-weight:700;color:var(--vw-blue-dark);margin:2px 0 8px;}
+.qa-answer{font-size:14px;color:var(--text);white-space:pre-wrap;}
+.qa-answer.empty{color:var(--text-soft);font-style:italic;}
+.qa-answer-item{display:block;margin-bottom:2px;}
+.submission-card{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+.submission-head{display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-size:13px;}
+mark{background:#fff3b0;padding:0 2px;border-radius:2px;}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .modal-head h3{font-size:16px;}
 .modal-close{background:transparent;border:none;font-size:20px;cursor:pointer;color:var(--text-soft);}
@@ -277,8 +288,8 @@ select.status-select{padding:6px;font-size:12px;width:auto;}
   <!-- DASHBOARD -->
   <section id="tab-dashboard" class="hidden">
     <div class="card">
-      <h2>📊 Dashboard Monitor 4.0</h2>
-      <div class="subtitle">Visão geral das necessidades e percepções dos Monitores</div>
+      <h2>📊 Monitor 4.0 — Radar de Desenvolvimento dos Monitores</h2>
+      <div class="subtitle">Respostas → Dados → Padrões → Análise → Prioridade → Desenvolvimento</div>
       <div class="filter-row">
         <select id="filterPeriodo">
           <option value="all">Todos os períodos</option>
@@ -290,6 +301,12 @@ select.status-select{padding:6px;font-size:12px;width:auto;}
         </select>
         <button class="small-btn btn-outline" id="btnRefreshDash">🔄 Atualizar dados</button>
       </div>
+      <div class="hint" id="confidenceNote" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Resumo Executivo</h2>
+      <div id="execSummary" style="font-size:14px;line-height:1.6;"></div>
     </div>
 
     <div class="card">
@@ -298,50 +315,51 @@ select.status-select{padding:6px;font-size:12px;width:auto;}
 
     <div class="card">
       <h2>🎯 Principais Temas de Desenvolvimento</h2>
-      <div class="subtitle">Pergunta 2 — o que os Monitores querem aprender</div>
+      <div class="subtitle">Pergunta 2 — o que os Monitores querem aprender (% de respondentes)</div>
       <div id="rankTemas"></div>
     </div>
 
     <div class="card">
-      <h2>📈 Competências a Desenvolver</h2>
-      <div class="subtitle">Pergunta 6 — onde eles querem evoluir</div>
+      <h2>🚀 Competências do Monitor do Futuro</h2>
+      <div class="subtitle">Pergunta 7 — qual competência é mais importante pra um Monitor do futuro</div>
       <div id="rankCompetencias"></div>
     </div>
 
     <div class="card">
-      <h2>💬 Temas para a Próxima Reunião</h2>
-      <div class="subtitle">Análise das respostas abertas (perguntas 5, 8 e 9) — toque em "Outro" pra classificar</div>
-      <div id="meetingThemes"></div>
+      <h2>🔥 Matriz de Prioridade de Desenvolvimento</h2>
+      <div class="subtitle">Combina menções em necessidades (P2), formato (P3), competência (P7) e respostas abertas classificadas</div>
+      <div id="priorityMatrix"></div>
     </div>
 
     <div class="card">
       <h2>🗣️ Voz dos Monitores</h2>
+      <div class="subtitle" id="voiceSubtitle">Análise de todas as perguntas abertas do questionário</div>
       <div id="voiceCards"></div>
       <button class="btn btn-gray btn-block" id="btnAllAnswers">VER TODAS AS RESPOSTAS</button>
       <div id="allAnswersArea" class="hidden" style="margin-top:12px;"></div>
+      <div id="subthemesArea" style="margin-top:12px;"></div>
     </div>
 
     <div class="card">
-      <h2>📝 Pauta Sugerida para a Próxima Reunião</h2>
-      <div id="agendaList"></div>
-      <button class="btn btn-primary btn-block" id="btnGenAgenda" style="margin-top:10px;">📋 GERAR PAUTA</button>
-      <div id="agendaOutput" style="margin-top:10px;"></div>
+      <h2>🗂️ Respostas por Envio</h2>
+      <div class="subtitle">Cada envio é uma participação completa — abra pra ver todas as respostas originais daquele Monitor</div>
+      <input type="text" id="submissionSearch" placeholder="🔍 Pesquisar em perguntas, respostas ou temas..." style="margin-bottom:12px;">
+      <div id="submissionsList"></div>
     </div>
 
     <div class="card">
-      <h2>✅ Ações da Supervisão</h2>
-      <div id="actionsIndicators" class="kpi-grid" style="margin-bottom:12px;"></div>
-      <div style="overflow-x:auto;">
-        <table class="actions-table" id="actionsTable"></table>
-      </div>
-      <button class="btn btn-outline btn-block" id="btnAddAction" style="margin-top:10px;">+ Nova ação</button>
+      <h2>🔎 Análises Cruzadas</h2>
+      <div id="crossAnalysisArea"></div>
     </div>
 
     <div class="card">
-      <h2>📢 Devolutiva aos Monitores</h2>
-      <div class="subtitle">"Vocês falaram. Nós ouvimos."</div>
-      <div id="devolutivaArea"></div>
-      <button class="btn btn-outline btn-block" id="btnAddDevolutiva" style="margin-top:10px;">+ Registrar devolutiva</button>
+      <h2>📈 Evolução das Necessidades</h2>
+      <div id="trendArea"></div>
+    </div>
+
+    <div class="card">
+      <h2>🚨 Alertas do Monitor 4.0</h2>
+      <div id="alertsArea"></div>
     </div>
 
     <div class="card">
@@ -420,7 +438,7 @@ select.status-select{padding:6px;font-size:12px;width:auto;}
   </div>
 </div>
 
-<!-- GENERIC MODAL (ações, devolutiva, questões, whatsapp) -->
+<!-- GENERIC MODAL (questões, whatsapp, classificação de temas) -->
 <div class="modal-overlay hidden" id="genericModal">
   <div class="modal-box">
     <div class="modal-head">
@@ -535,9 +553,7 @@ function defaultState(){
       questionsVersion: QUESTIONS_VERSION
     },
     responses:[],   // {id, timestamp, answers:{qid: value|array}, otherTags:{}}
-    actions:[],     // {id, tema, acao, responsavel, prazo, status}
-    devolutivas:[], // {id, tema, oQueSeraFeito, status}
-    themeTags:{},   // map openAnswerId -> tema (classificação manual)
+    themeTags:{},   // map openAnswerId -> tema (classificação manual/sugerida)
     lastUpdated:null
   };
 }
@@ -556,8 +572,8 @@ function loadState(){
     });
     // Se o banco de perguntas salvo neste aparelho está de uma versão antiga
     // (arquivo foi atualizado depois que este aparelho abriu o app pela 1ª vez),
-    // troca as perguntas pelas mais recentes do arquivo. Respostas, ações e
-    // devolutivas continuam intactas — só o banco de perguntas é substituído.
+    // troca as perguntas pelas mais recentes do arquivo. Respostas e
+    // classificações de tema continuam intactas — só o banco de perguntas é substituído.
     const savedVersion = (parsed.config && parsed.config.questionsVersion) || 0;
     if(savedVersion !== QUESTIONS_VERSION){
       merged.config.questions = defaultQuestions();
@@ -904,11 +920,97 @@ function escapeAttr(str){
 }
 
 /* =========================================================
-   ANÁLISE / DASHBOARD
+   MOTOR DE TEMAS (classificação por palavra-chave)
 ========================================================= */
-function filteredResponses(){
+const THEME_OPTIONS = ["Liderança","Comunicação","Pessoas","Qualidade","Segurança","Processos","IA","Tecnologia","Desenvolvimento","Indicadores","Outros"];
+
+// Palavras-chave por tema, usadas para (1) classificar automaticamente uma
+// alternativa marcada em P2/P3/P7 e (2) sugerir um tema para respostas abertas
+// que ainda não foram classificadas manualmente. Ordem importa: a primeira
+// batida vence, então temas mais específicos vêm antes de temas genéricos.
+const THEME_KEYWORDS = [
+  ["IA", ["ia","inteligência artificial","chatgpt","automação","automatizar"]],
+  ["Segurança", ["segurança","epi","acidente"]],
+  ["Qualidade", ["qualidade","retrabalho","defeito"]],
+  ["Indicadores", ["indicador","indicadores","métrica","meta","kpi"]],
+  ["Tecnologia", ["tecnologia","digitaliz","sistema","ferramenta digital","app","aplicativo"]],
+  ["Liderança", ["liderança","líder","liderar","tomada de decisão"]],
+  ["Comunicação", ["comunicação","comunicar","conversa","diálogo","feedback","informação","falar","escutar","ouvir"]],
+  ["Pessoas", ["gestão de pessoas","pessoas","equipe","conflito","relacionamento","inteligência emocional","trabalho em equipe"]],
+  ["Processos", ["processo","organização","gestão do tempo","solução de problemas","visão de processo"]],
+  ["Desenvolvimento", ["desenvolv","treinamento","curso","aprender","capacitação","carreira","conhecimento técnico","conhecimento sobre a volkswagen","ensinar","workshop","palestra","vídeo","material digital","quiz","estudo de caso"]]
+];
+
+// Escapa caractere especial de regex num texto usado como padrão.
+function escapeRegex(str){ return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function inferTheme(text){
+  if(!text) return null;
+  const t = String(text).toLowerCase();
+  for(const [theme, keywords] of THEME_KEYWORDS){
+    const hit = keywords.some(k=>{
+      // palavras curtas (ex: "ia") usam limite de palavra pra não confundir
+      // com substrings de outras palavras; termos compostos usam includes normal.
+      if(k.length<=3 && !k.includes(" ")){
+        return new RegExp("\\b"+escapeRegex(k)+"\\b","i").test(t);
+      }
+      return t.includes(k);
+    });
+    if(hit) return theme;
+  }
+  return null;
+}
+
+/* =========================================================
+   FILTROS (período + tema) — usados por TODA a análise
+========================================================= */
+function periodOnlyResponses(){
   const period = document.getElementById("filterPeriodo").value;
   return state.responses.filter(r=>within(r.timestamp, period));
+}
+
+function openQuestionIds(){
+  return state.config.questions.filter(q=>q.type==="open").map(q=>q.id);
+}
+
+function resolveAnswerLabels(r, qid){
+  // Retorna a(s) alternativa(s) marcadas em texto puro (resolvendo "Outra resposta")
+  const v = r.answers[qid];
+  if(v==null) return [];
+  if(Array.isArray(v)){
+    return v.map(x=> x==="__other__" ? ((r.other&&r.other[qid])||"").trim() : x).filter(Boolean);
+  }
+  if(v==="__other__") return [((r.other&&r.other[qid])||"").trim()].filter(Boolean);
+  return [String(v)];
+}
+
+function responseThemes(r){
+  // Conjunto de temas (deduplicado) que essa resposta toca, considerando
+  // P2, P3, P7 (via palavra-chave) e as respostas abertas já classificadas
+  // (manual ou sugerida).
+  const themes = new Set();
+  ["q2","q3","q7"].forEach(qid=>{
+    if(!state.config.questions.find(q=>q.id===qid)) return;
+    resolveAnswerLabels(r, qid).forEach(label=>{
+      const t = inferTheme(label);
+      if(t) themes.add(t);
+    });
+  });
+  openQuestionIds().forEach(qid=>{
+    const txt = (r.answers[qid]||"").trim();
+    if(!txt) return;
+    const key = r.id+"::"+qid;
+    const tag = state.themeTags[key] || inferTheme(txt);
+    if(tag) themes.add(tag);
+  });
+  return themes;
+}
+
+function filteredResponses(){
+  const tema = document.getElementById("filterTema") ? document.getElementById("filterTema").value : "all";
+  const base = periodOnlyResponses();
+  if(tema==="all") return base;
+  return base.filter(r=> responseThemes(r).has(tema));
 }
 
 function countMulti(qid){
@@ -916,12 +1018,8 @@ function countMulti(qid){
   filteredResponses().forEach(r=>{
     const arr = r.answers[qid];
     if(!Array.isArray(arr)) return;
-    arr.forEach(v=>{
-      let label = v;
-      if(v==="__other__"){
-        label = (r.other && r.other[qid]) ? r.other[qid].trim() : null;
-      }
-      if(!label) return;
+    const uniqueLabels = new Set(resolveAnswerLabels(r, qid));
+    uniqueLabels.forEach(label=>{
       map[label] = (map[label]||0)+1;
     });
   });
@@ -931,14 +1029,9 @@ function countMulti(qid){
 function countSingle(qid){
   const map = {};
   filteredResponses().forEach(r=>{
-    let v = r.answers[qid];
-    if(v==null) return;
-    let label = v;
-    if(v==="__other__"){
-      label = (r.other && r.other[qid]) ? r.other[qid].trim() : null;
-    }
-    if(!label) return;
-    map[label] = (map[label]||0)+1;
+    resolveAnswerLabels(r, qid).forEach(label=>{
+      map[label] = (map[label]||0)+1;
+    });
   });
   return Object.entries(map).sort((a,b)=>b[1]-a[1]);
 }
@@ -950,93 +1043,181 @@ function avgScale(qid){
 }
 
 function openAnswers(){
-  // Retorna lista de {respId, qid, texto, tema}
+  // Retorna lista de {respId, qid, texto, tema, temaSugerido} pra TODAS as
+  // perguntas abertas do banco atual (não só P5/P8/P9).
   const list = [];
+  const qs = state.config.questions.filter(q=>q.type==="open");
   filteredResponses().forEach(r=>{
-    ["q5","q8","q9"].forEach(qid=>{
-      const txt = (r.answers[qid]||"").trim();
+    qs.forEach(q=>{
+      const txt = (r.answers[q.id]||"").trim();
       if(!txt) return;
-      const key = r.id+"::"+qid;
+      const key = r.id+"::"+q.id;
+      const manual = state.themeTags[key] || null;
       list.push({
-        key, respId:r.id, qid, texto:txt, timestamp:r.timestamp,
-        tema: state.themeTags[key] || null
+        key, respId:r.id, qid:q.id, qText:q.text, texto:txt, timestamp:r.timestamp,
+        tema: manual, temaSugerido: manual ? null : inferTheme(txt)
       });
     });
   });
   return list.sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp));
 }
 
-const THEME_OPTIONS = ["Liderança","Comunicação","Pessoas","Qualidade","Segurança","Processos","IA","Tecnologia","Desenvolvimento","Indicadores","Outros"];
+function themeCounts(){
+  // Quantos RESPONDENTES (não menções) tocam em cada tema, dentro do filtro atual.
+  const map = {};
+  filteredResponses().forEach(r=>{
+    responseThemes(r).forEach(t=>{ map[t] = (map[t]||0)+1; });
+  });
+  return Object.entries(map).sort((a,b)=>b[1]-a[1]);
+}
 
+/* =========================================================
+   RESUMO EXECUTIVO
+========================================================= */
+function renderExecSummary(){
+  const n = filteredResponses().length;
+  if(n===0){
+    document.getElementById("execSummary").innerHTML = '<div class="hint">Nenhuma resposta dentro dos filtros selecionados ainda.</div>';
+    return;
+  }
+  const themes = themeCounts().slice(0,3).map(t=>t[0]);
+  const topComp = countSingle("q7")[0];
+  const openCount = openAnswers().length;
+  let txt = "Neste " + (document.getElementById("filterPeriodo").value==="all" ? "período completo" : "período selecionado") + " foram registradas <b>"+n+"</b> resposta"+(n===1?"":"s")+".";
+  if(themes.length) txt += " Os principais temas de desenvolvimento identificados foram <b>"+themes.join(", ")+"</b>.";
+  if(topComp) txt += " A competência mais citada como importante pro Monitor do futuro foi <b>"+escapeHtml(topComp[0])+"</b>.";
+  if(openCount>0) txt += " Foram registradas <b>"+openCount+"</b> respostas abertas, que indicam interesse em desenvolvimento prático e maior proximidade com a Supervisão.";
+  document.getElementById("execSummary").innerHTML = "<p>"+txt+"</p>";
+}
+
+/* =========================================================
+   KPIs
+========================================================= */
 function renderKpis(){
   const total = state.config.totalMonitores || 1;
-  const respCount = state.responses.length;
-  const pct = Math.min(100, Math.round((respCount/total)*100));
-  const topNeed = countMulti("q2")[0];
-  const meetingThemesCount = new Set(openAnswers().map(a=>a.tema).filter(Boolean)).size || estimateThemeCount();
-  const avg = avgScale("q1");
+  const filteredCount = filteredResponses().length;
+  const periodCount = periodOnlyResponses().length;
+  const pct = Math.min(100, Math.round((periodCount/total)*100));
+  const topNeed = themeCounts()[0];
+  const topComp = countSingle("q7")[0];
+  const temasIdentificados = themeCounts().length;
+  const openCount = openAnswers().length;
 
   const kpis = [
-    {icon:"👥", val: respCount+" / "+total, label:"Participação ("+pct+"%)"},
-    {icon:"📊", val: respCount, label:"Respostas recebidas"},
-    {icon:"🎯", val: topNeed ? topNeed[0] : "—", label:"Principal necessidade"},
-    {icon:"💬", val: meetingThemesCount, label:"Temas para reunião"},
-    {icon:"⭐", val: avg!=null ? avg.toFixed(1)+" / 5":"—", label:"Autoavaliação média"}
+    {icon:"📥", val: filteredCount, label:"Respostas analisadas (filtro atual)"},
+    {icon:"👥", val: periodCount+" / "+total+" ("+pct+"%)", label:"Participação no período"},
+    {icon:"🎯", val: topNeed ? topNeed[0] : "—", label:"Principal tema"},
+    {icon:"🚀", val: topComp ? topComp[0] : "—", label:"Principal competência"},
+    {icon:"🧩", val: temasIdentificados, label:"Temas identificados"},
+    {icon:"🗣️", val: openCount, label:"Respostas abertas disponíveis"}
   ];
   document.getElementById("kpiGrid").innerHTML = kpis.map(k=>
     '<div class="kpi-card"><div class="kpi-icon">'+k.icon+'</div><div class="kpi-value">'+escapeHtml(k.val)+'</div><div class="kpi-label">'+escapeHtml(k.label)+'</div></div>'
   ).join("");
 }
 
-function estimateThemeCount(){
-  // fallback simples: quantos temas distintos entre as classificadas manualmente ou 0
-  return new Set(openAnswers().map(a=>a.tema).filter(Boolean)).size;
-}
-
-function renderRanking(containerId, entries, colorClass){
-  const max = entries.length ? entries[0][1] : 1;
+/* =========================================================
+   RANKINGS (com % de respondentes)
+========================================================= */
+function renderRanking(containerId, entries){
   const totalResp = filteredResponses().length || 1;
   let html = "";
   entries.slice(0,12).forEach(([label,count],i)=>{
-    const pct = Math.round((count/max)*100);
     const pctOfResp = Math.round((count/totalResp)*100);
     html += '<div class="rank-row">'
       + '<div class="rank-row-top"><span>'+(i+1)+'. '+escapeHtml(label)+'</span><span>'+count+' ('+pctOfResp+'%)</span></div>'
-      + '<div class="rank-bar-bg"><div class="rank-bar-fill" style="width:'+pct+'%"></div></div>'
+      + '<div class="rank-bar-bg"><div class="rank-bar-fill" style="width:'+pctOfResp+'%"></div></div>'
       + '</div>';
   });
   document.getElementById(containerId).innerHTML = html || '<div class="hint">Sem respostas ainda para este filtro.</div>';
 }
 
-function renderMeetingThemes(){
-  const answers = openAnswers();
-  const grouped = {};
-  answers.forEach(a=>{
-    const t = a.tema || "Não classificado";
-    grouped[t] = (grouped[t]||0)+1;
-  });
-  const sorted = Object.entries(grouped).sort((a,b)=>b[1]-a[1]);
-  const maxCount = sorted.length ? sorted[0][1] : 1;
-
+/* =========================================================
+   MATRIZ DE PRIORIDADE
+========================================================= */
+function renderPriorityMatrix(){
+  const n = filteredResponses().length;
+  const el = document.getElementById("priorityMatrix");
+  if(n < 5){
+    el.innerHTML = '<div class="hint">⚠️ Dados insuficientes para classificação. Base atual: '+n+' resposta(s) — recomendado ter pelo menos 5 pra uma matriz confiável.</div>';
+    return;
+  }
+  const counts = themeCounts();
+  if(!counts.length){
+    el.innerHTML = '<div class="hint">Nenhum tema identificado ainda dentro deste filtro.</div>';
+    return;
+  }
+  const max = counts[0][1];
   let html = "";
-  sorted.forEach(([tema,count])=>{
-    let badge = "badge-low", label="INTERESSE";
-    const ratio = count/maxCount;
-    if(ratio>=0.66){ badge="badge-high"; label="PRIORIDADE ALTA"; }
-    else if(ratio>=0.33){ badge="badge-mid"; label="PRIORIDADE MÉDIA"; }
+  counts.forEach(([tema,count])=>{
+    const ratio = count/max;
+    let badge="badge-low", label="⚪ MONITORAR";
+    if(ratio>=0.66){ badge="badge-high"; label="🔴 ALTA PRIORIDADE"; }
+    else if(ratio>=0.4){ badge="badge-mid"; label="🟠 PRIORIDADE MÉDIA"; }
+    else if(ratio>=0.15){ badge="badge-low"; label="🟢 OPORTUNIDADE"; }
+    const pct = Math.round((count/n)*100);
     html += '<div class="theme-block"><span class="badge '+badge+'">'+label+'</span>'
       + '<div style="font-weight:800;margin-top:6px;">'+escapeHtml(tema)+'</div>'
-      + '<div class="hint">'+count+' menções</div></div>';
+      + '<div class="hint">'+count+' de '+n+' respondentes ('+pct+'%) tocaram nesse tema</div></div>';
   });
-  document.getElementById("meetingThemes").innerHTML = html || '<div class="hint">Nenhuma resposta aberta ainda.</div>';
+  el.innerHTML = html;
 }
 
+/* =========================================================
+   VOZ DOS MONITORES + SUBTEMAS
+========================================================= */
 function renderVoiceCards(){
   const answers = openAnswers().slice(0,6);
-  let html = answers.map(a=>
-    '<div class="voice-card">"'+escapeHtml(a.texto)+'"<div class="voice-tema">Tema: '+escapeHtml(a.tema||"não classificado")+'</div></div>'
-  ).join("");
-  document.getElementById("voiceCards").innerHTML = html || '<div class="hint">Nenhuma resposta ainda.</div>';
+  let html = answers.map(a=>{
+    const temaLabel = a.tema ? escapeHtml(a.tema) : (a.temaSugerido ? escapeHtml(a.temaSugerido)+' (sugestão)' : "não classificado");
+    return '<div class="voice-card">"'+escapeHtml(a.texto)+'"<div class="hint" style="margin-top:2px;">'+escapeHtml(a.qText)+'</div><div class="voice-tema">Tema: '+temaLabel+'</div></div>';
+  }).join("");
+  document.getElementById("voiceCards").innerHTML = html || '<div class="hint">Nenhuma resposta aberta ainda.</div>';
+  document.getElementById("voiceSubtitle").textContent = "Análise de todas as perguntas abertas do questionário — base: "+openAnswers().length+" resposta(s)"+(openAnswers().length<5 ? " (amostra pequena, interpretar com cautela)":"");
+}
+
+const SUBTHEME_KEYWORDS = {
+  "Comunicação": [
+    ["com a equipe", ["equipe"]],
+    ["entre turnos", ["turno"]],
+    ["com a liderança", ["liderança","supervisão","supervisor"]],
+    ["passagem de informação", ["informação","passar","repassar"]]
+  ],
+  "IA": [
+    ["conhecimento sobre IA", ["conhecer","aprender","entender"]],
+    ["ferramentas de IA", ["ferramenta","chatgpt","copiloto"]],
+    ["automação", ["automação","automatizar"]],
+    ["produtividade", ["produtividade","agilizar","tempo"]]
+  ],
+  "Desenvolvimento": [
+    ["cursos e treinamentos", ["curso","treinamento"]],
+    ["carreira", ["carreira","crescer","crescimento"]],
+    ["liderança", ["liderança","líder"]],
+    ["conhecimento técnico", ["técnico","processo"]]
+  ]
+};
+
+function renderSubthemes(){
+  const answers = openAnswers();
+  const el = document.getElementById("subthemesArea");
+  let html = "";
+  Object.keys(SUBTHEME_KEYWORDS).forEach(tema=>{
+    const temaAnswers = answers.filter(a=> (a.tema||a.temaSugerido)===tema);
+    if(temaAnswers.length < 3) return; // sem evidência suficiente pra subdividir
+    const subCounts = {};
+    temaAnswers.forEach(a=>{
+      const t = a.texto.toLowerCase();
+      SUBTHEME_KEYWORDS[tema].forEach(([sub, kws])=>{
+        if(kws.some(k=>t.includes(k))) subCounts[sub] = (subCounts[sub]||0)+1;
+      });
+    });
+    const entries = Object.entries(subCounts).sort((a,b)=>b[1]-a[1]);
+    if(!entries.length) return;
+    html += '<div class="theme-block"><b>Subtemas em "'+escapeHtml(tema)+'"</b> <span class="hint">(base: '+temaAnswers.length+' respostas)</span>';
+    entries.forEach(([sub,count])=>{ html += '<div class="hint">• '+escapeHtml(sub)+' — '+count+' menção(ões)</div>'; });
+    html += '</div>';
+  });
+  el.innerHTML = html; // vazio se não houver evidência — não inventamos subtema
 }
 
 document.getElementById("btnAllAnswers").addEventListener("click",()=>{
@@ -1046,10 +1227,9 @@ document.getElementById("btnAllAnswers").addEventListener("click",()=>{
     const answers = openAnswers();
     let html = '<table class="actions-table"><tr><th>Data</th><th>Pergunta</th><th>Resposta</th><th>Tema</th></tr>';
     answers.forEach(a=>{
-      const qLabel = a.qid==="q5"?"Comunicação (P5)": a.qid==="q8"?"Experiência Supervisão (P8)":"Pauta reunião (P9)";
-      html += '<tr><td>'+fmtDate(a.timestamp)+'</td><td>'+qLabel+'</td><td>'+escapeHtml(a.texto)+'</td>'
+      html += '<tr><td>'+fmtDate(a.timestamp)+'</td><td>'+escapeHtml(a.qText)+'</td><td>'+escapeHtml(a.texto)+'</td>'
         + '<td><select data-tag-key="'+a.key+'" class="status-select">'
-        + '<option value="">—</option>'
+        + '<option value="">'+(a.temaSugerido ? "— (sugestão: "+escapeHtml(a.temaSugerido)+")" : "—")+'</option>'
         + THEME_OPTIONS.map(t=>'<option value="'+t+'"'+(a.tema===t?" selected":"")+'>'+t+'</option>').join("")
         + '</select></td></tr>';
     });
@@ -1068,162 +1248,350 @@ document.getElementById("btnAllAnswers").addEventListener("click",()=>{
   }
 });
 
-function renderAgendaPreview(){
-  const topTemas = countMulti("q2").slice(0,5);
-  let html = topTemas.map(([label,count],i)=>
-    '<div class="agenda-item"><div class="agenda-num">'+(i+1)+'</div><div><b>'+escapeHtml(label)+'</b><div class="hint">'+count+' manifestações</div></div></div>'
-  ).join("");
-  document.getElementById("agendaList").innerHTML = html || '<div class="hint">Sem dados suficientes ainda.</div>';
+/* =========================================================
+   RESPOSTAS POR ENVIO (nível individual)
+========================================================= */
+function globalEnvioNumbers(){
+  // Numeração estável: 1 = primeiro envio já recebido (por ordem cronológica),
+  // independente dos filtros atuais. Um envio = uma participação completa.
+  const sorted = state.responses.slice().sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
+  const map = {};
+  sorted.forEach((r,i)=>{ map[r.id] = i+1; });
+  return map;
 }
 
-document.getElementById("btnGenAgenda").addEventListener("click",()=>{
-  const topTemas = countMulti("q2").slice(0,4).map(x=>x[0]);
-  const meetingThemes = Object.entries(
-    openAnswers().reduce((acc,a)=>{const t=a.tema||"Temas a classificar"; acc[t]=(acc[t]||0)+1; return acc;},{})
-  ).sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>x[0]);
-
-  const items = Array.from(new Set([...topTemas, ...meetingThemes])).slice(0,6);
-  let txt = "📝 PAUTA SUGERIDA — Reunião Monitores x Supervisão\n\n";
-  items.forEach((it,i)=> txt += (i+1)+". "+it+"\n");
-  txt += "\nGerado automaticamente pelo Monitor 4.0 em "+new Date().toLocaleDateString("pt-BR");
-
-  document.getElementById("agendaOutput").innerHTML = '<textarea readonly style="min-height:160px;">'+escapeHtml(txt)+'</textarea>';
-  showToast("Pauta gerada");
-});
-
-/* AÇÕES */
-function renderActions(){
-  const actions = state.actions;
-  const counts = {"Concluído":0,"Em andamento":0,"Pendente":0};
-  actions.forEach(a=> counts[a.status] = (counts[a.status]||0)+1 );
-  document.getElementById("actionsIndicators").innerHTML = [
-    {icon:"🟢",val:counts["Concluído"],label:"Concluídas"},
-    {icon:"🟡",val:counts["Em andamento"],label:"Em andamento"},
-    {icon:"🔴",val:counts["Pendente"],label:"Pendentes"},
-  ].map(k=>'<div class="kpi-card"><div class="kpi-icon">'+k.icon+'</div><div class="kpi-value">'+k.val+'</div><div class="kpi-label">'+k.label+'</div></div>').join("");
-
-  let html = '<tr><th>Tema</th><th>Ação</th><th>Responsável</th><th>Prazo</th><th>Status</th><th></th></tr>';
-  actions.forEach(a=>{
-    html += '<tr>'
-      + '<td>'+escapeHtml(a.tema)+'</td>'
-      + '<td>'+escapeHtml(a.acao)+'</td>'
-      + '<td>'+escapeHtml(a.responsavel)+'</td>'
-      + '<td>'+escapeHtml(a.prazo)+'</td>'
-      + '<td><select class="status-select" data-action-id="'+a.id+'">'
-        + ['Pendente','Em andamento','Concluído'].map(s=>'<option'+(a.status===s?" selected":"")+'>'+s+'</option>').join("")
-      + '</select></td>'
-      + '<td><button class="small-btn btn-red" data-del-action="'+a.id+'">✕</button></td>'
-      + '</tr>';
-  });
-  document.getElementById("actionsTable").innerHTML = html;
-
-  document.querySelectorAll('select[data-action-id]').forEach(sel=>{
-    sel.addEventListener("change",()=>{
-      const a = state.actions.find(x=>x.id===sel.dataset.actionId);
-      if(a){ a.status = sel.value; saveState(); renderActions(); }
-    });
-  });
-  document.querySelectorAll('[data-del-action]').forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      state.actions = state.actions.filter(x=>x.id!==btn.dataset.delAction);
-      saveState(); renderActions();
-    });
-  });
+function answeredCount(r){
+  return currentQuestions().filter(q=>{
+    if(q.type==="open") return (r.answers[q.id]||"").trim().length>0;
+    if(q.type==="multi") return resolveAnswerLabels(r,q.id).length>0;
+    return resolveAnswerLabels(r,q.id).length>0;
+  }).length;
 }
 
-document.getElementById("btnAddAction").addEventListener("click",()=>{
-  openGenericModal("Nova ação", `
-    <label class="hint">Tema</label>
-    <input type="text" id="fldTema" style="margin-bottom:10px;">
-    <label class="hint">Ação</label>
-    <textarea id="fldAcao" style="margin-bottom:10px;"></textarea>
-    <label class="hint">Responsável</label>
-    <input type="text" id="fldResp" style="margin-bottom:10px;">
-    <label class="hint">Prazo</label>
-    <input type="date" id="fldPrazo" style="margin-bottom:14px;">
-    <button class="btn btn-primary btn-block" id="fldSave">Salvar ação</button>
-  `);
-  document.getElementById("fldSave").addEventListener("click",()=>{
-    const tema = document.getElementById("fldTema").value.trim();
-    const acao = document.getElementById("fldAcao").value.trim();
-    if(!tema || !acao){ showToast("Preencha tema e ação"); return; }
-    state.actions.push({
-      id:uid(), tema, acao,
-      responsavel: document.getElementById("fldResp").value.trim(),
-      prazo: document.getElementById("fldPrazo").value,
-      status:"Pendente"
-    });
-    saveState();
-    closeGenericModal();
-    renderActions();
-    showToast("Ação criada");
-  });
-});
-
-/* DEVOLUTIVA */
-function renderDevolutivas(){
-  let html = state.devolutivas.map(d=>
-    '<div class="theme-block"><div class="section-title" style="margin-top:0;">Tema mais solicitado</div><b>'+escapeHtml(d.tema)+'</b>'
-    + '<div class="section-title">O que será feito</div>'+escapeHtml(d.oQueSeraFeito)
-    + '<div style="margin-top:8px;"><span class="badge '+(d.status==="Concluído"?"badge-low":d.status==="Em andamento"?"badge-mid":"badge-high")+'">'+d.status+'</span></div></div>'
-  ).join("");
-  document.getElementById("devolutivaArea").innerHTML = html || '<div class="hint">Nenhuma devolutiva registrada ainda.</div>';
+function submissionMatchesSearch(r, term){
+  if(!term) return true;
+  const t = term.toLowerCase();
+  if(r.id.toLowerCase().includes(t)) return true;
+  for(const tema of responseThemes(r)){ if(tema.toLowerCase().includes(t)) return true; }
+  for(const q of currentQuestions()){
+    if(q.text.toLowerCase().includes(t)) return true;
+    const labels = resolveAnswerLabels(r, q.id);
+    if(labels.some(l=>l.toLowerCase().includes(t))) return true;
+  }
+  return false;
 }
 
-document.getElementById("btnAddDevolutiva").addEventListener("click",()=>{
-  openGenericModal("Nova devolutiva", `
-    <label class="hint">Tema</label>
-    <input type="text" id="fldDevTema" style="margin-bottom:10px;">
-    <label class="hint">O que será feito</label>
-    <textarea id="fldDevAcao" style="margin-bottom:10px;"></textarea>
-    <label class="hint">Status</label>
-    <select id="fldDevStatus" style="margin-bottom:14px;">
-      <option>Pendente</option><option>Em andamento</option><option>Concluído</option>
-    </select>
-    <button class="btn btn-primary btn-block" id="fldDevSave">Salvar devolutiva</button>
-  `);
-  document.getElementById("fldDevSave").addEventListener("click",()=>{
-    const tema = document.getElementById("fldDevTema").value.trim();
-    if(!tema){ showToast("Informe o tema"); return; }
-    state.devolutivas.push({
-      id:uid(), tema,
-      oQueSeraFeito: document.getElementById("fldDevAcao").value.trim(),
-      status: document.getElementById("fldDevStatus").value
-    });
-    saveState();
-    closeGenericModal();
-    renderDevolutivas();
-    showToast("Devolutiva registrada");
-  });
-});
+let currentSubmissionListIds = [];
+let currentSubmissionIndex = -1;
 
-/* INSIGHTS AUTOMÁTICOS (regras simples sobre dados reais) */
-function renderInsights(){
-  const insights = [];
-  const topTema = countMulti("q2")[0];
-  if(topTema) insights.push('"'+topTema[0]+'" é atualmente a principal necessidade de desenvolvimento apontada pelos Monitores ('+topTema[1]+' menções).');
+function renderSubmissionsList(){
+  const el = document.getElementById("submissionsList");
+  const term = (document.getElementById("submissionSearch").value||"").trim();
+  const envioNum = globalEnvioNumbers();
+  let list = filteredResponses().filter(r=>submissionMatchesSearch(r, term));
+  list = list.slice().sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp));
+  currentSubmissionListIds = list.map(r=>r.id);
 
-  const commTheme = openAnswers().filter(a=>a.qid==="q5").length;
-  if(commTheme>0) insights.push("Existem "+commTheme+" manifestações sobre comunicação entre Monitores e Supervisão — vale revisar o formato dos encontros.");
-
-  const iaMentions = countMulti("q2").find(x=>x[0].toLowerCase().includes("ia")) || countMulti("q6").find(x=>x[0].toLowerCase().includes("intelig"));
-  if(iaMentions) insights.push("Inteligência Artificial / tecnologia aparece como tema emergente entre os interesses dos Monitores.");
-
-  const trainingType = countSingle("q3")[0];
-  if(trainingType) insights.push("A maioria dos Monitores prefere o formato \""+trainingType[0]+"\" para desenvolvimento.");
-
-  const totalResp = filteredResponses().length;
-  const total = state.config.totalMonitores || 1;
-  if(totalResp < total){
-    insights.push("Ainda faltam "+(total-totalResp)+" Monitores responderem à pesquisa — considere reforçar o convite.");
+  if(!list.length){
+    el.innerHTML = '<div class="hint">Nenhum envio encontrado com os filtros/pesquisa atuais.</div>';
+    return;
   }
 
-  document.getElementById("insightsArea").innerHTML = insights.length
-    ? insights.map(i=>'<div class="insight-item">💡 '+escapeHtml(i)+'</div>').join("")
+  let html = '<div class="hint" style="margin-bottom:10px;">'+list.length+' envio(s) encontrado(s).</div>';
+  list.forEach(r=>{
+    const themes = Array.from(responseThemes(r)).slice(0,3);
+    html += '<div class="submission-card">'
+      + '<div class="submission-head"><span>Envio #'+String(envioNum[r.id]).padStart(3,"0")+'</span><span class="hint" style="font-weight:600;">'+fmtDate(r.timestamp)+'</span></div>'
+      + '<div class="hint">'+answeredCount(r)+' de '+currentQuestions().length+' perguntas respondidas</div>'
+      + (themes.length ? '<div class="hint">Temas principais: '+themes.map(escapeHtml).join(" • ")+'</div>' : '')
+      + '<button class="btn btn-outline btn-block" data-open-submission="'+r.id+'" style="margin-top:8px;">VER TODAS AS RESPOSTAS</button>'
+      + '</div>';
+  });
+  el.innerHTML = html;
+
+  el.querySelectorAll('[data-open-submission]').forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      currentSubmissionIndex = currentSubmissionListIds.indexOf(btn.dataset.openSubmission);
+      renderSubmissionDetailModal();
+    });
+  });
+}
+
+document.getElementById("submissionSearch").addEventListener("input", renderSubmissionsList);
+
+function formatAnswerHtml(r, q){
+  if(q.type==="open"){
+    const txt = (r.answers[q.id]||"").trim();
+    return txt ? '<div class="qa-answer">'+escapeHtml(txt)+'</div>' : '<div class="qa-answer empty">Não respondida</div>';
+  }
+  const labels = resolveAnswerLabels(r, q.id);
+  if(!labels.length) return '<div class="qa-answer empty">Não respondida</div>';
+  if(q.type==="multi"){
+    return '<div class="qa-answer">'+labels.map(l=>'<span class="qa-answer-item">☑ '+escapeHtml(l)+'</span>').join("")+'</div>';
+  }
+  return '<div class="qa-answer">'+escapeHtml(labels[0])+'</div>';
+}
+
+function formatSubmissionAsText(r){
+  const envioNum = globalEnvioNumbers()[r.id];
+  let txt = "MONITOR 4.0 — ENVIO #"+String(envioNum).padStart(3,"0")+"\n\n";
+  txt += "Data: "+new Date(r.timestamp).toLocaleDateString("pt-BR")+"\n";
+  txt += "Horário: "+new Date(r.timestamp).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+"\n\n";
+  currentQuestions().forEach(q=>{
+    txt += "Q"+q.order+" — "+q.text+"\n";
+    if(q.type==="open"){
+      const v = (r.answers[q.id]||"").trim();
+      txt += "Resposta: "+(v || "Não respondida")+"\n\n";
+    } else {
+      const labels = resolveAnswerLabels(r, q.id);
+      txt += "Resposta: "+(labels.length ? labels.join(", ") : "Não respondida")+"\n\n";
+    }
+  });
+  return txt;
+}
+
+function copyToClipboard(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>showToast("Respostas copiadas!")).catch(()=>fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text){
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try{ document.execCommand("copy"); showToast("Respostas copiadas!"); }
+  catch(e){ showToast("Não foi possível copiar automaticamente"); }
+  document.body.removeChild(ta);
+}
+
+function renderSubmissionDetailModal(){
+  const id = currentSubmissionListIds[currentSubmissionIndex];
+  const r = state.responses.find(x=>x.id===id);
+  if(!r) return;
+  const envioNum = globalEnvioNumbers()[r.id];
+  const total = currentSubmissionListIds.length;
+
+  let body = '<div class="btn-row" style="margin-bottom:10px;">'
+    + '<button class="small-btn btn-gray" id="btnPrevSubmission"'+(currentSubmissionIndex<=0?" disabled":"")+'>← Anterior</button>'
+    + '<span class="hint" style="align-self:center;">Envio '+(currentSubmissionIndex+1)+' de '+total+'</span>'
+    + '<button class="small-btn btn-gray" id="btnNextSubmission"'+(currentSubmissionIndex>=total-1?" disabled":"")+'>Próximo →</button>'
+    + '</div>';
+  body += '<div class="hint">Data: '+new Date(r.timestamp).toLocaleDateString("pt-BR")+' — Horário: '+new Date(r.timestamp).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+'</div>';
+  body += '<button class="btn btn-green btn-block" id="btnCopySubmission" style="margin:10px 0;">📋 Copiar respostas</button>';
+
+  currentQuestions().forEach(q=>{
+    body += '<div class="qa-block"><div class="qa-label">Q'+q.order+'</div><div class="qa-question">'+escapeHtml(q.text)+'</div>'+formatAnswerHtml(r,q)+'</div>';
+  });
+
+  openGenericModal("Envio #"+String(envioNum).padStart(3,"0"), body, true);
+
+  document.getElementById("btnCopySubmission").addEventListener("click",()=> copyToClipboard(formatSubmissionAsText(r)));
+  const prevBtn = document.getElementById("btnPrevSubmission");
+  const nextBtn = document.getElementById("btnNextSubmission");
+  if(prevBtn) prevBtn.addEventListener("click",()=>{ if(currentSubmissionIndex>0){ currentSubmissionIndex--; renderSubmissionDetailModal(); } });
+  if(nextBtn) nextBtn.addEventListener("click",()=>{ if(currentSubmissionIndex<total-1){ currentSubmissionIndex++; renderSubmissionDetailModal(); } });
+}
+
+/* =========================================================
+   ANÁLISES CRUZADAS
+========================================================= */
+function renderCrossAnalysis(){
+  const el = document.getElementById("crossAnalysisArea");
+  const n = filteredResponses().length;
+  if(n < 5){
+    el.innerHTML = '<div class="hint">⚠️ Amostra pequena ('+n+' resposta(s)) — análises cruzadas ficam mais confiáveis com pelo menos 5 respostas.</div>';
+    return;
+  }
+  const topTheme = themeCounts()[0];
+  let html = "";
+
+  if(topTheme){
+    const tema = topTheme[0];
+    // Necessidade x Competência
+    const compTop3 = countSingle("q7").slice(0,3).map(x=>x[0]);
+    const apareceComoCompetencia = compTop3.some(c=> inferTheme(c)===tema || c===tema);
+    html += '<div class="theme-block"><b>Necessidade × Competência</b><div class="hint">O tema mais citado como necessidade ("'+escapeHtml(tema)+'") '
+      + (apareceComoCompetencia ? "também aparece entre as 3 competências mais citadas como importantes pro Monitor do futuro — os dados indicam alinhamento entre o que os Monitores querem aprender e o que consideram importante." : "não aparece entre as 3 competências mais citadas — pode representar uma lacuna entre o que é buscado hoje e o que é visto como prioridade pro futuro.")
+      + '</div></div>';
+
+    // Necessidade x Formato de treinamento
+    const respondentesTema = filteredResponses().filter(r=> responseThemes(r).has(tema));
+    if(respondentesTema.length>=3){
+      const formatCounts = {};
+      respondentesTema.forEach(r=> resolveAnswerLabels(r,"q3").forEach(f=>{ formatCounts[f]=(formatCounts[f]||0)+1; }));
+      const topFormat = Object.entries(formatCounts).sort((a,b)=>b[1]-a[1])[0];
+      if(topFormat){
+        html += '<div class="theme-block"><b>Necessidade × Formato de treinamento</b><div class="hint">Entre os '+respondentesTema.length+' respondentes que tocaram em "'+escapeHtml(tema)+'", o formato mais citado foi <b>"'+escapeHtml(topFormat[0])+'"</b> ('+topFormat[1]+' menções).</div></div>';
+      }
+    }
+
+    // Tema x Percepção (P1)
+    if(respondentesTema.length>=3){
+      const avgTema = respondentesTema.map(r=>parseInt(r.answers.q1,10)).filter(v=>!isNaN(v));
+      const avgGeral = avgScale("q1");
+      if(avgTema.length && avgGeral!=null){
+        const mediaTema = (avgTema.reduce((a,b)=>a+b,0)/avgTema.length);
+        const diff = mediaTema - avgGeral;
+        html += '<div class="theme-block"><b>Tema × Percepção de desenvolvimento</b><div class="hint">Respondentes que tocaram em "'+escapeHtml(tema)+'" têm autopercepção média de '+mediaTema.toFixed(1)+'/5, contra '+avgGeral.toFixed(1)+'/5 da base geral'
+          + (Math.abs(diff)>=0.4 ? (diff<0 ? " — os dados indicam percepção de desenvolvimento menor nesse grupo, o que pode representar uma oportunidade de atenção." : " — os dados indicam percepção de desenvolvimento maior nesse grupo.") : " — sem diferença relevante observada.")
+          + '</div></div>';
+      }
+    }
+  }
+
+  document.getElementById("crossAnalysisArea").innerHTML = html || '<div class="hint">Dados insuficientes para cruzamentos neste filtro.</div>';
+}
+
+/* =========================================================
+   EVOLUÇÃO DAS NECESSIDADES (tendência temporal)
+========================================================= */
+function renderTrend(){
+  const el = document.getElementById("trendArea");
+  const resp = filteredResponses().slice().sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
+  if(resp.length < 6){
+    el.innerHTML = '<div class="hint">⚠️ Poucas respostas ('+resp.length+') pra uma análise de tendência confiável ao longo do tempo. Volte aqui quando houver mais dados.</div>';
+    return;
+  }
+  // divide em até 4 blocos cronológicos (semanas relativas, não datas de calendário)
+  const buckets = 4;
+  const size = Math.ceil(resp.length/buckets);
+  const groups = [];
+  for(let i=0;i<resp.length;i+=size) groups.push(resp.slice(i,i+size));
+
+  const topThemesOverall = themeCounts().slice(0,3).map(x=>x[0]);
+  if(!topThemesOverall.length){
+    el.innerHTML = '<div class="hint">Nenhum tema identificado ainda.</div>';
+    return;
+  }
+
+  let html = '<div class="hint" style="margin-bottom:8px;">Base dividida em '+groups.length+' blocos cronológicos de respostas (não calendário).</div>';
+  topThemesOverall.forEach(tema=>{
+    html += '<div class="theme-block"><b>'+escapeHtml(tema)+'</b>';
+    groups.forEach((g,i)=>{
+      const withTheme = g.filter(r=>responseThemes(r).has(tema)).length;
+      const pct = g.length ? Math.round((withTheme/g.length)*100) : 0;
+      html += '<div class="rank-row"><div class="rank-row-top"><span>Bloco '+(i+1)+'</span><span>'+pct+'%</span></div>'
+        + '<div class="rank-bar-bg"><div class="rank-bar-fill" style="width:'+pct+'%"></div></div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById("trendArea").innerHTML = html;
+}
+
+/* =========================================================
+   ALERTAS INTELIGENTES
+========================================================= */
+function renderAlerts(){
+  const el = document.getElementById("alertsArea");
+  const alerts = [];
+  const n = filteredResponses().length;
+  const total = state.config.totalMonitores || 1;
+  const periodCount = periodOnlyResponses().length;
+  const periodPct = periodCount/total;
+
+  if(periodPct < 0.5){
+    alerts.push("Participação está baixa no período selecionado ("+periodCount+"/"+total+" — "+Math.round(periodPct*100)+"%).");
+  }
+
+  const counts = themeCounts();
+  if(counts.length && n>0){
+    const [topTema, topCount] = counts[0];
+    const share = topCount/n;
+    alerts.push('"'+topTema+'" é atualmente o tema mais citado ('+Math.round(share*100)+'% dos respondentes).');
+    if(share >= 0.6){
+      alerts.push("Existe concentração elevada no tema \""+topTema+"\" — vale investigar se é uma necessidade real e ampla ou um caso pontual.");
+    }
+  }
+
+  // Tendência simples: compara metade mais antiga com metade mais recente
+  const resp = filteredResponses().slice().sort((a,b)=> new Date(a.timestamp)-new Date(b.timestamp));
+  if(resp.length>=6){
+    const half = Math.floor(resp.length/2);
+    const older = resp.slice(0,half), recent = resp.slice(half);
+    ["IA","Tecnologia"].forEach(tema=>{
+      const olderShare = older.filter(r=>responseThemes(r).has(tema)).length/older.length;
+      const recentShare = recent.filter(r=>responseThemes(r).has(tema)).length/recent.length;
+      if(recentShare - olderShare >= 0.2){
+        alerts.push('"'+tema+'" apresentou crescimento nas respostas mais recentes ('+Math.round(olderShare*100)+'% → '+Math.round(recentShare*100)+'%).');
+      }
+    });
+    const olderThemes = new Set(); older.forEach(r=>responseThemes(r).forEach(t=>olderThemes.add(t)));
+    const recentThemes = new Set(); recent.forEach(r=>responseThemes(r).forEach(t=>recentThemes.add(t)));
+    recentThemes.forEach(t=>{ if(!olderThemes.has(t)) alerts.push('Foi identificado um tema novo nas respostas mais recentes: "'+t+'".'); });
+
+    const olderPratico = older.filter(r=>resolveAnswerLabels(r,"q3").some(f=>f.toLowerCase().includes("prático"))).length/older.length;
+    const recentPratico = recent.filter(r=>resolveAnswerLabels(r,"q3").some(f=>f.toLowerCase().includes("prático"))).length/recent.length;
+    if(recentPratico - olderPratico >= 0.2){
+      alerts.push("Há aumento de interesse em treinamento prático nas respostas mais recentes.");
+    }
+  }
+
+  document.getElementById("alertsArea").innerHTML = alerts.length
+    ? alerts.map(a=>'<div class="insight-item">🚨 '+escapeHtml(a)+'</div>').join("")
+    : '<div class="hint">Nenhum alerta no momento — dados dentro do esperado.</div>';
+}
+
+/* =========================================================
+   INSIGHTS AUTOMÁTICOS (com interpretação, base em dados reais)
+========================================================= */
+function renderInsights(){
+  const el = document.getElementById("insightsArea");
+  const n = filteredResponses().length;
+  const insights = [];
+
+  const counts = themeCounts();
+  if(counts.length){
+    const [tema,count] = counts[0];
+    insights.push({
+      titulo: '"'+tema+'" é o principal tema de desenvolvimento',
+      corpo: "Os dados indicam que \""+tema+"\" é o tema mais citado entre os respondentes ("+count+" de "+n+"). Isso pode representar uma oportunidade de priorizar ações de desenvolvimento nessa frente."
+    });
+  }
+
+  const topComp = countSingle("q7")[0];
+  if(topComp){
+    insights.push({
+      titulo: 'Competência mais valorizada pro futuro',
+      corpo: "Foi observado que \""+topComp[0]+"\" é a competência mais citada como importante pro Monitor do futuro ("+topComp[1]+" menções)."
+    });
+  }
+
+  const topFormat = countMulti("q3")[0];
+  if(topFormat){
+    insights.push({
+      titulo: 'Formato de desenvolvimento preferido',
+      corpo: "A maioria dos Monitores que respondeu indica preferência pelo formato \""+topFormat[0]+"\"."
+    });
+  }
+
+  if(n>0 && n<5){
+    insights.push({
+      titulo:'Amostra pequena',
+      corpo: "⚠️ A base atual tem apenas "+n+" resposta(s) dentro deste filtro — interpretar os padrões acima com cautela até que mais Monitores respondam."
+    });
+  }
+
+  const total = state.config.totalMonitores||1;
+  const periodCount = periodOnlyResponses().length;
+  if(periodCount < total){
+    insights.push({
+      titulo:'Participação incompleta',
+      corpo:"Ainda faltam "+(total-periodCount)+" Monitores responderem dentro do período selecionado — considere reforçar o convite antes de tirar conclusões definitivas."
+    });
+  }
+
+  el.innerHTML = insights.length
+    ? insights.map(i=>'<div class="insight-item">💡 <b>'+escapeHtml(i.titulo)+'.</b> '+escapeHtml(i.corpo)+'</div>').join("")
     : '<div class="hint">Aguardando mais respostas para gerar insights.</div>';
 }
 
-/* FILTRO TEMA select populate */
+/* =========================================================
+   FILTRO TEMA select populate
+========================================================= */
 function populateThemeFilter(){
   const sel = document.getElementById("filterTema");
   const current = sel.value;
@@ -1233,14 +1601,22 @@ function populateThemeFilter(){
 
 function renderDashboard(){
   populateThemeFilter();
+  const n = filteredResponses().length;
+  const confEl = document.getElementById("confidenceNote");
+  if(n===0) confEl.textContent = "Nenhum dado disponível para análise.";
+  else if(n<5) confEl.textContent = "Base: "+n+" resposta(s) — ⚠️ Amostra pequena, interpretar com cautela.";
+  else confEl.textContent = "Base: "+n+" resposta(s).";
+  renderExecSummary();
   renderKpis();
   renderRanking("rankTemas", countMulti("q2"));
-  renderRanking("rankCompetencias", countMulti("q6"));
-  renderMeetingThemes();
+  renderRanking("rankCompetencias", countSingle("q7"));
+  renderPriorityMatrix();
   renderVoiceCards();
-  renderAgendaPreview();
-  renderActions();
-  renderDevolutivas();
+  renderSubthemes();
+  renderSubmissionsList();
+  renderCrossAnalysis();
+  renderTrend();
+  renderAlerts();
   renderInsights();
 }
 
@@ -1277,13 +1653,13 @@ document.getElementById("btnPrintReport").addEventListener("click",()=>{
 
 document.getElementById("btnWhatsSummary").addEventListener("click",()=>{
   const total = state.config.totalMonitores||1;
-  const respCount = filteredResponses().length;
-  const topTema = countMulti("q2")[0];
-  const topComp = countMulti("q6")[0];
+  const periodCount = periodOnlyResponses().length;
+  const topTema = themeCounts()[0];
+  const topComp = countSingle("q7")[0];
   let txt = "📊 *Monitor 4.0 — Resumo*\n\n";
-  txt += "👥 Participação: "+respCount+"/"+total+" ("+Math.round((respCount/total)*100)+"%)\n";
+  txt += "👥 Participação: "+periodCount+"/"+total+" ("+Math.round((periodCount/total)*100)+"%)\n";
   if(topTema) txt += "🎯 Principal necessidade: "+topTema[0]+"\n";
-  if(topComp) txt += "📈 Competência mais buscada: "+topComp[0]+"\n";
+  if(topComp) txt += "🚀 Competência mais citada: "+topComp[0]+"\n";
   txt += "\nGerado pelo Monitor 4.0 em "+new Date().toLocaleDateString("pt-BR");
   openGenericModal("💬 Enviar resumo por WhatsApp", `
     <textarea id="waPreview" style="min-height:180px;">${escapeHtml(txt)}</textarea>
@@ -1553,7 +1929,7 @@ document.getElementById("btnAddQuestion").addEventListener("click",()=>{
 });
 
 document.getElementById("btnResetAll").addEventListener("click",()=>{
-  if(!confirm("Isso vai apagar TODAS as respostas, ações e devolutivas salvas neste dispositivo. Continuar?")) return;
+  if(!confirm("Isso vai apagar TODAS as respostas salvas neste dispositivo. Continuar?")) return;
   state = defaultState();
   saveState();
   renderHome(); renderDashboard(); renderAdmin();
@@ -1563,9 +1939,10 @@ document.getElementById("btnResetAll").addEventListener("click",()=>{
 /* =========================================================
    MODAL GENÉRICO
 ========================================================= */
-function openGenericModal(title, bodyHtml){
+function openGenericModal(title, bodyHtml, wide){
   document.getElementById("genericModalTitle").textContent = title;
   document.getElementById("genericModalBody").innerHTML = bodyHtml;
+  document.querySelector("#genericModal .modal-box").classList.toggle("modal-wide", !!wide);
   document.getElementById("genericModal").classList.remove("hidden");
 }
 function closeGenericModal(){
@@ -1615,16 +1992,6 @@ function mergeImportedState(imported){
   const existingIds = new Set(state.responses.map(r=>r.id));
   (imported.responses||[]).forEach(r=>{
     if(!existingIds.has(r.id)){ state.responses.push(r); existingIds.add(r.id); }
-  });
-  // merge actions por id
-  const existingActionIds = new Set(state.actions.map(a=>a.id));
-  (imported.actions||[]).forEach(a=>{
-    if(!existingActionIds.has(a.id)) state.actions.push(a);
-  });
-  // merge devolutivas por id
-  const existingDevIds = new Set(state.devolutivas.map(d=>d.id));
-  (imported.devolutivas||[]).forEach(d=>{
-    if(!existingDevIds.has(d.id)) state.devolutivas.push(d);
   });
   // merge tags de tema
   Object.assign(state.themeTags, imported.themeTags||{});
