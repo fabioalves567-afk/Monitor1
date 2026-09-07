@@ -443,7 +443,7 @@ const DEFAULT_TOTAL_MONITORES = 24;
 // Suba este número toda vez que o banco de perguntas (defaultQuestions) for alterado.
 // Isso faz o app substituir as perguntas salvas no aparelho pelas novas do arquivo,
 // mesmo em dispositivos que já tinham aberto o app antes.
-const QUESTIONS_VERSION = 8;
+const QUESTIONS_VERSION = 9;
 
 function defaultQuestions(){
   return [
@@ -474,7 +474,7 @@ function defaultQuestions(){
       options:["Conversa individual","Reunião mensal","Grupo de comunicação","outros"]
     },
     {
-      id:"q5", order:5, type:"open", required:true, allowOther:false,
+      id:"q5", order:5, type:"open", required:false, allowOther:false,
       text:"O que poderia tornar a comunicação entre Monitores e Supervisão mais eficiente?",
       placeholder:"Conte sua ideia. O que você acredita que poderia melhorar essa comunicação?"
     },
@@ -484,12 +484,12 @@ function defaultQuestions(){
       options:["Liderança","Comunicação","Conhecimento técnico","Inteligência emocional","Capacidade de ensinar","Tomada de decisão","Tecnologia","Inteligência Artificial","Solução de problemas","Visão de processo","Trabalho em equipe","Gestão de pessoas","Outros"]
     },
     {
-      id:"q8", order:7, type:"open", required:true, allowOther:false,
+      id:"q8", order:7, type:"open", required:false, allowOther:false,
       text:"O que você gostaria de aprender ou conhecer melhor através da experiência da Supervisão?",
       placeholder:"Existe algum conhecimento, experiência ou assunto que você gostaria que a Supervisão compartilhasse com os Monitores?"
     },
     {
-      id:"q9", order:8, type:"open", required:true, allowOther:false,
+      id:"q9", order:8, type:"open", required:false, allowOther:false,
       text:"Qual assunto você gostaria que fosse abordado nas próximas reuniões com a  Supervisão?",
       placeholder:"Escreva um tema que você gostaria que fosse discutido na próxima reunião."
     },
@@ -509,7 +509,7 @@ function defaultQuestions(){
       placeholder:"Escreva sua resposta..."
     },
     {
-      id:"q_mtlklneiwkc73x", order:12, type:"open", required:true, allowOther:false,
+      id:"q_mtlklneiwkc73x", order:12, type:"open", required:false, allowOther:false,
       text:"Se tivesse a oportunidade de participar de um treinamento hoje, qual tema escolheria para ajudar na sua carreira?",
       placeholder:"Escreva sua resposta..."
     },
@@ -519,7 +519,7 @@ function defaultQuestions(){
       placeholder:"Escreva sua resposta..."
     },
     {
-      id:"q_mtqd6k51ent5wb", order:14, type:"open", required:true, allowOther:false,
+      id:"q_mtqd6k51ent5wb", order:14, type:"open", required:false, allowOther:false,
       text:"Vamos pensar 2027, Oque deveríamos:\n- Continuar fazendo\n- Parar de fazer\n- Experimentar e começar a fazer",
       placeholder:""
     }
