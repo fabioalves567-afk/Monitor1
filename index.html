@@ -440,6 +440,10 @@ select.status-select{padding:6px;font-size:12px;width:auto;}
 ========================================================= */
 const STORAGE_KEY = "fahrwerk_monitorplus_v1";
 const DEFAULT_TOTAL_MONITORES = 24;
+// Suba este número toda vez que o banco de perguntas (defaultQuestions) for alterado.
+// Isso faz o app substituir as perguntas salvas no aparelho pelas novas do arquivo,
+// mesmo em dispositivos que já tinham aberto o app antes.
+const QUESTIONS_VERSION = 7;
 
 function defaultQuestions(){
   return [
@@ -527,7 +531,8 @@ function defaultState(){
     version:1,
     config:{
       totalMonitores: DEFAULT_TOTAL_MONITORES,
-      questions: defaultQuestions()
+      questions: defaultQuestions(),
+      questionsVersion: QUESTIONS_VERSION
     },
     responses:[],   // {id, timestamp, answers:{qid: value|array}, otherTags:{}}
     actions:[],     // {id, tema, acao, responsavel, prazo, status}
@@ -546,9 +551,19 @@ function loadState(){
     const parsed = JSON.parse(raw);
     // migração simples / merge com defaults pra garantir campos novos
     const base = defaultState();
-    return Object.assign(base, parsed, {
-      config: Object.assign(base.config, parsed.config||{}),
+    const merged = Object.assign(base, parsed, {
+      config: Object.assign({}, base.config, parsed.config||{}),
     });
+    // Se o banco de perguntas salvo neste aparelho está de uma versão antiga
+    // (arquivo foi atualizado depois que este aparelho abriu o app pela 1ª vez),
+    // troca as perguntas pelas mais recentes do arquivo. Respostas, ações e
+    // devolutivas continuam intactas — só o banco de perguntas é substituído.
+    const savedVersion = (parsed.config && parsed.config.questionsVersion) || 0;
+    if(savedVersion !== QUESTIONS_VERSION){
+      merged.config.questions = defaultQuestions();
+      merged.config.questionsVersion = QUESTIONS_VERSION;
+    }
+    return merged;
   }catch(e){
     console.error("Erro ao carregar estado", e);
     return defaultState();
