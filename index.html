@@ -443,7 +443,7 @@ const DEFAULT_TOTAL_MONITORES = 24;
 // Suba este número toda vez que o banco de perguntas (defaultQuestions) for alterado.
 // Isso faz o app substituir as perguntas salvas no aparelho pelas novas do arquivo,
 // mesmo em dispositivos que já tinham aberto o app antes.
-const QUESTIONS_VERSION = 7;
+const QUESTIONS_VERSION = 8;
 
 function defaultQuestions(){
   return [
@@ -475,7 +475,7 @@ function defaultQuestions(){
     },
     {
       id:"q5", order:5, type:"open", required:true, allowOther:false,
-      text:"O que poderia tornar a comunicação entre Monitores e Supervisão mais próxima, aberta e eficiente?",
+      text:"O que poderia tornar a comunicação entre Monitores e Supervisão mais eficiente?",
       placeholder:"Conte sua ideia. O que você acredita que poderia melhorar essa comunicação?"
     },
     {
@@ -494,12 +494,12 @@ function defaultQuestions(){
       placeholder:"Escreva um tema que você gostaria que fosse discutido na próxima reunião."
     },
     {
-      id:"q_mtljz0bkte1w9t", order:9, type:"open", required:true, allowOther:false,
+      id:"q_mtljz0bkte1w9t", order:9, type:"open", required:false, allowOther:false,
       text:"Qual foi o momento mais marcante positivamente da sua trajetória como Monitor, e o que esse momento ensinou a você?",
       placeholder:"Escreva sua resposta..."
     },
     {
-      id:"q_mtlkgqu6aeyqkq", order:10, type:"open", required:true, allowOther:false,
+      id:"q_mtlkgqu6aeyqkq", order:10, type:"open", required:false, allowOther:false,
       text:"Pensando no seu futuro profissional, em que direção você gostaria de desenvolver sua carreira nos próximos anos? Explique onde quero chegar?\" O que preciso desenvolver? E como minha liderança pode apoiar meu desenvolvimento?",
       placeholder:"Escreva sua resposta..."
     },
@@ -519,9 +519,9 @@ function defaultQuestions(){
       placeholder:"Escreva sua resposta..."
     },
     {
-      id:"q_mtqd6k51ent5wb", order:14, type:"single", required:true, allowOther:true,
+      id:"q_mtqd6k51ent5wb", order:14, type:"open", required:true, allowOther:false,
       text:"Vamos pensar 2027, Oque deveríamos:\n- Continuar fazendo\n- Parar de fazer\n- Experimentar e começar a fazer",
-      options:[]
+      placeholder:""
     }
   ];
 }
